@@ -58,6 +58,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.setAttribute("alt","Restaurant "+restaurant.name+" inside")
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
@@ -95,9 +96,6 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
@@ -118,18 +116,51 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 createReviewHTML = (review) => {
   const li = document.createElement('li');
   const name = document.createElement('p');
-  name.innerHTML = review.name;
+  name.innerHTML = '<i class="fas fa-user"></i> '+review.name+ " <span>"+review.date+"</span>";
+  name.className = "user_comment";
   li.appendChild(name);
 
-  const date = document.createElement('p');
-  date.innerHTML = review.date;
-  li.appendChild(date);
+
+  let stars = "";
+
+  for(let i=0; i<review.rating; i++){
+    console.log(review.rating)
+    stars = stars+'<i class="fas fa-star"></i>';
+  }
+  for(let i=0; i<5-review.rating; i++){
+    console.log(review.rating)
+    stars = stars+'<i class="far fa-star"></i>';
+  }
+
+  stars = stars+"<span class='descVote'>";
+  switch (review.rating){
+
+    case 1:
+      stars = stars+" Baby don't take me, no more.";
+      break;
+    case 2:
+      stars = stars+" If i have to i will be there.";
+      break;
+    case 3:
+      stars = stars+" Nice place!";
+      break;
+    case 4:
+      stars = stars+" Excellent!";
+      break;
+    case 5:
+      stars = stars+" I love it!";
+      break;
+
+
+  }
+  stars = stars+"</span>";
 
   const rating = document.createElement('p');
-  rating.innerHTML = `Rating: ${review.rating}`;
+  rating.innerHTML = stars;
   li.appendChild(rating);
 
   const comments = document.createElement('p');
+  comments.className = "commentBody";
   comments.innerHTML = review.comments;
   li.appendChild(comments);
 

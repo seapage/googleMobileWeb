@@ -1,0 +1,118 @@
+#restaurants-list li{
+    width: 48%;
+    margin: 0 4% 20px 0;
+    box-sizing: border-box;
+    padding: 30px 30px 20px;
+}
+#restaurants-list li:nth-child(3n){
+    margin-right: 4%;
+}
+#restaurants-list li:nth-child(2n){
+    margin-right: 0;
+}
+#reviews-container{
+    padding-bottom: 30px;
+}
+.inside nav{
+    height: 90px;
+}
+.user_comment span{
+    padding-top: 3px;
+}
+#restaurant-container p, #reviews-container p,
+#restaurant-hours td, #restaurant-hours th{
+    font-size: 14px;
+}
+#breadcrumb{
+    width: 70%;
+}
+@media (max-width: 700px){
+    #skipperMap h2{
+        font-size: 24px;
+    }
+    #restaurants-list li{
+        width: 100%;
+        margin: 0 0 20px 0 ;
+        box-sizing: border-box;
+        padding: 30px 30px 20px;
+    }
+    #restaurants-list li:nth-child(3n){
+        margin-right: 0;
+    }
+    #restaurants-list li:nth-child(2n){
+        margin-right: 0;
+    }
+    nav h1 a,
+    #searchResult h2{
+        font-size: 12pt;
+    }
+    #searchResult h2{
+        padding-bottom: 0;
+    }
+}
+@media (max-width: 650px) {
+
+    #restaurant-container p, #reviews-container p,
+    #restaurant-hours td, #restaurant-hours th{
+        font-size: 12px;
+    }
+}
+@media (max-width: 540px) {
+    #restaurant-img,
+    #restaurant-cuisine{
+        float: right;
+        width: 100%;
+        margin-left: 15px;
+    }
+    #restaurant-cuisine{
+        height: 20px;
+        line-height: 20px;
+        margin-top: -20px;
+    }
+}
+@media (max-width: 500px) {
+    #restaurants-list{
+        padding: 0 30px;
+    }
+    .filter-options select{
+        width: 90%;
+        margin: 10px auto 0;
+    }
+    #skipperMap{
+        height: 120px;
+    }
+    nav h1 a{
+        font-size: 10pt;
+    }
+    #reviews-container {
+        padding: 30px 15px 80px;
+    }
+    .user_comment span{
+        padding-top: 5%;
+    }
+    #restaurant-hours td{
+        width: 100%;
+        display: block;
+    }
+    #restaurant-hours td:first-child{
+        font-weight: bold;
+    }
+
+}
+@media (max-width: 420px) {
+    nav h1 a {
+        font-size: 8pt;
+    }
+    nav h1{
+        line-height: 50px;
+    }
+    .inside nav{
+        height: 67px;
+    }
+    #breadcrumb {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+        padding-left: 0;
+    }
+}

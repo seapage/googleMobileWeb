@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" media="(max-width: 850px)" href="css/768.css" />
+  <link rel="stylesheet" href="css/fontawesome-all.min.css">
   <title>Restaurant Reviews</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -14,32 +17,51 @@
     </nav>
   </header>
 
-  <main id="maincontent">
+  <a href="#skipperMap" class="skip">Skip map</a>
+  <main id="maincontent" role="main">
     <section id="map-container">
       <div id="map"></div>
     </section>
-    <section>
-      <div class="filter-options">
-        <h2>Filter Results</h2>
-        <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
+    <section role="search">
+      <div id="skipperMap" class="filter-options">
+        <h2 aria-label="Filter form">Filter Form</h2>
+        <select aria-label="Select close neighborhood" id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-describedby="filterInformation">
           <option value="all">All Neighborhoods</option>
         </select>
-        <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
+        <select aria-label="Select food cuisines" id="cuisines-select" name="cuisines" onchange="updateRestaurants()" aria-describedby="filterInformation">
           <option value="all">All Cuisines</option>
         </select>
+        <p id="filterInformation" class="hidden">
+          Filter will reload automaticly if you change search criteria
+        </p>
       </div>
+    </section>
+    <section id="searchResult" role="searchbox">
+      <h2 tabindex="0" aria-label="Filter results">Filter Results</h2>
       <ul id="restaurants-list"></ul>
     </section>
   </main>
 
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9V-wKrokG_jO7VP2GfGIF5EdspXYox_4&libraries=places&callback=initMap"></script>
 
 
   <footer id="footer">
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+    Copyright (c) 2017-2018 <a title="Home page" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
+
+  <script>
+    /* service workers */
+
+    if(navigator.serviceWorker){
+      navigator.serviceWorker.register('/serviceWorker.js', { scope: '/' }).then(()=>{
+        console.log('register');
+    }).catch(()=>{
+        console.log('nope');
+    })
+    }
+  </script>
 
 </body>
 

@@ -82,6 +82,15 @@ window.initMap = () => {
   });
   updateRestaurants();
 
+  google.maps.event.addListenerOnce(self.map, 'tilesloaded', ()=>{
+
+    elem = document.querySelectorAll("#map *")
+      elem.forEach((item)=>{
+
+        item.setAttribute("tabindex", -1)
+      })
+
+  });
 }
 
 /**

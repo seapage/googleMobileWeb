@@ -454,6 +454,9 @@ nav#nav h1 a {
   }
 }
 @media (max-width: 1000px){
+  #breadcrumb li a.linkBreadLast{
+    color: #ffffff;
+  }
   .inside #map-container {
     height: 260px;
     position: relative;

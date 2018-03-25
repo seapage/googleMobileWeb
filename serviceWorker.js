@@ -6,7 +6,7 @@ self.addEventListener('install', function(event) {
         return cacheOpend.addAll([
             '/restaurant.html',
             '/'
-        ]);}
+        ])}
 
             self.addEventListener('fetch', function(event) {
 

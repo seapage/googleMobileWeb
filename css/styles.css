@@ -50,17 +50,17 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   text-transform: uppercase;
 }
 /* ====================== Navigation ====================== */
-nav {
+nav#nav {
   width: 100%;
   height: 80px;
   background-color: #252831;
   text-align:center;
 }
-nav h1 {
+nav#nav h1 {
   margin: auto;
   line-height: 80px;
 }
-nav h1 a {
+nav#nav h1 a {
   color: #fff;
   font-size: 14pt;
   font-weight: 200;
@@ -75,7 +75,12 @@ nav h1 a {
     margin: 0;
     width: calc(50% - 80px);
 }
-
+#breadcrumb li a.linkBreadLast{
+  color: #000000;
+}
+#breadcrumb li a.linkBreadLast:hover{
+  text-decoration: none;
+}
 /* Display list items side by side */
 #breadcrumb li {
     display: inline;
@@ -158,7 +163,7 @@ nav h1 a {
   min-width: 100%;
   height: auto;
 }
-#restaurants-list li h1 {
+#restaurants-list li h3 {
   color: #f18200;
   font-family: Arial,sans-serif;
   font-size: 14pt;
@@ -184,7 +189,10 @@ nav h1 a {
   text-decoration: none;
   text-transform: uppercase;
 }
-
+.inside #footer{
+  width: 50%;
+  box-sizing: border-box;
+}
 /* ====================== Restaurant Details ====================== */
 .inside header {
   position: fixed;
@@ -194,7 +202,7 @@ nav h1 a {
 }
 .inside #map-container {
   background: blue none repeat scroll 0 0;
-  height: 87%;
+  height: 100%;
   position: fixed;
   right: 0;
   top: 80px;

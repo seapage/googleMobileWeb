@@ -12,19 +12,19 @@
 
 <body>
   <header>
-    <nav>
+    <nav id="nav">
       <h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
   </header>
 
-  <a href="#skipperMap" class="skip">Skip map</a>
+  <a href="#neighborhoods-select" class="skip">Skip map</a>
   <main id="maincontent" role="main">
-    <section id="map-container">
-      <div id="map"></div>
+    <section tabindex="100000" id="map-container" role="application" aria-hidden="true">
+      <div id="map" tabindex="-1"></div>
     </section>
     <section role="search">
       <div id="skipperMap" class="filter-options">
-        <h2 aria-label="Filter form">Filter Form</h2>
+        <h2>Filter Form</h2>
         <select aria-label="Select close neighborhood" id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-describedby="filterInformation">
           <option value="all">All Neighborhoods</option>
         </select>
@@ -37,7 +37,7 @@
       </div>
     </section>
     <section id="searchResult" role="searchbox">
-      <h2 tabindex="0" aria-label="Filter results">Filter Results</h2>
+      <h2 aria-label="Filter results">Filter Results</h2>
       <ul id="restaurants-list"></ul>
     </section>
   </main>
@@ -54,13 +54,13 @@
   <script>
     /* service workers */
 
-    if(navigator.serviceWorker){
-      navigator.serviceWorker.register('/serviceWorker.js', { scope: '/' }).then(()=>{
-        console.log('register');
-    }).catch(()=>{
-        console.log('nope');
-    })
-    }
+//    if(navigator.serviceWorker){
+//      navigator.serviceWorker.register('/serviceWorker.js', { scope: '/' }).then(()=>{
+//        console.log('register');
+//    }).catch(()=>{
+//        console.log('nope');
+//    })
+//    }
   </script>
 
 </body>

@@ -4,6 +4,10 @@ let restaurants,
 var map
 var markers = []
 
+
+
+DBHelper.loadAllRestaurant();
+
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */

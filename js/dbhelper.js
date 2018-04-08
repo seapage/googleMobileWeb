@@ -1,53 +1,71 @@
+const coreBase = idb.open('RestaurantApp', 1, upgradeDB => {
+    upgradeDB.createObjectStore('Restaurants', {keyPath: 'id'});
+});
+
 /**
  * Common database helper functions.
  */
 class DBHelper {
+
+
 
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8000 // Change this to your server port
-    return `http://localhost:${port}/data/restaurants.json`;
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}/restaurants`;
+  }
+
+  static loadAllRestaurant(){
+    fetch(DBHelper.DATABASE_URL).then((resp)=>(resp.json())).then((jsonData)=>{
+        coreBase.then(db => {
+            const tx = db.transaction('Restaurants', 'readwrite');
+
+
+            jsonData.map((elem)=>{
+                tx.objectStore('Restaurants').put({
+                    id: elem.id,
+                    data: {...elem}
+                });
+            })
+
+            return tx.complete;
+        });
+
+    })
   }
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+      coreBase.then(db => {
+          return db.transaction('Restaurants')
+              .objectStore('Restaurants').getAll();
+      }).then(
+          allObjs => callback(null, allObjs.map((elem=>elem.data)))
+      ).catch((error)=>{
+        callback(error, null)
+      });
   }
 
   /**
    * Fetch a restaurant by its ID.
    */
   static fetchRestaurantById(id, callback) {
-    // fetch all restaurants with proper error handling.
-    DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        const restaurant = restaurants.find(r => r.id == id);
-        if (restaurant) { // Got the restaurant
-          callback(null, restaurant);
-        } else { // Restaurant does not exist in the database
-          callback('Restaurant does not exist', null);
-        }
-      }
-    });
+      coreBase.then(db => {
+          return db.transaction('Restaurants')
+              .objectStore('Restaurants').get(parseInt(id));
+      }).then(
+          elem => callback(null,elem.data)
+      ).catch((error)=>{
+          callback(error, null)
+      });
+
+
+
   }
 
   /**
@@ -113,7 +131,7 @@ class DBHelper {
         callback(error, null);
       } else {
         // Get all neighborhoods from all restaurants
-        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
+        const neighborhoods = restaurants.map((elem) => elem.neighborhood)
         // Remove duplicates from neighborhoods
         const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
         callback(null, uniqueNeighborhoods);
@@ -150,7 +168,7 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    return (`/img/${restaurant.photograph}.jpg`);
   }
 
   /**

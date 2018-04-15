@@ -3,7 +3,7 @@
 
 <head>
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-  <link rel="stylesheet" href="css/styles.min.css">
+  <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" media="(max-width: 850px)" href="css/768.css" />
   <link rel="stylesheet" href="css/fontawesome-all.min.css">
   <meta name="theme-color" content="#252831"/>
@@ -13,6 +13,7 @@
 </head>
 
 <body>
+<div id="offline"></div>
   <header>
     <nav id="nav">
       <h1><a href="/">Restaurant Reviews</a></h1>
@@ -36,6 +37,10 @@
         <p id="filterInformation" class="hidden">
           Filter will reload automaticly if you change search criteria
         </p>
+        <label id="favFilter">
+          Show only favourite restaurants
+          <input id="favCheckbox" aria-label="Show only favourite" type="checkbox" name="Onlyfavourite" onchange="updateRestaurants()">
+        </label>
       </div>
     </section>
     <section id="searchResult" role="searchbox">
@@ -65,6 +70,7 @@
     })
     }
   </script>
+<script src="/js/allPages.js"></script>
 
 </body>
 

@@ -26,6 +26,7 @@ self.addEventListener('install', function(event) {
         return cacheOpend.addAll([
             '/restaurant.html',
             '/js/restaurant_info.js',
+            '/js/dbhelper.js',
             '/'
         ])})
 });

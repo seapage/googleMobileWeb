@@ -104,6 +104,8 @@ updateRestaurants = () => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
 
+
+
   const cIndex = cSelect.selectedIndex;
   const nIndex = nSelect.selectedIndex;
 
@@ -162,6 +164,32 @@ createRestaurantHTML = (restaurant) => {
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
   li.append(name);
+
+  const pFavourite = document.createElement('p');
+  pFavourite.setAttribute("data-idRestaurant", restaurant.id);
+  pFavourite.className = "favouriteButton";
+  if(restaurant.is_favorite&&restaurant.is_favorite!="false"){
+      pFavourite.setAttribute("data-addedFavourite", "true");
+      pFavourite.innerHTML = "<a title='Remove "+restaurant.name+" from favourite restaurants'>Remove from favourite <i class=\"fas fa-heart\"></i></a>";
+  }else{
+      pFavourite.setAttribute("data-addedFavourite", "false");
+      pFavourite.innerHTML = "<a title='Add "+restaurant.name+" to favourite restaurants'>Add to favourite <i class=\"far fa-heart\"></i></a>";
+  }
+
+
+    pFavourite.addEventListener("click",function(){
+      if(this.getAttribute("data-addedFavourite")=="true"){
+          pFavourite.setAttribute("data-addedFavourite", "false");
+          pFavourite.innerHTML =  "<a title='Add "+restaurant.name+" to favourite restaurants'>Add to favourite <i class=\"far fa-heart\"></i></a>";
+          DBHelper.makeUnFavourite(parseInt(this.getAttribute("data-idRestaurant")));
+      }else{
+          pFavourite.setAttribute("data-addedFavourite", "true");
+          pFavourite.innerHTML = "<a title='Remove "+restaurant.name+" from favourite restaurants'>Remove from favourite <i class=\"fas fa-heart\"></i></a>";
+          DBHelper.makeFavourite(parseInt(this.getAttribute("data-idRestaurant")));
+      }
+
+    })
+    li.append(pFavourite);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;

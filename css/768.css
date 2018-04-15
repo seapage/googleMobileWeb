@@ -26,6 +26,32 @@
 #breadcrumb{
     width: 70%;
 }
+@media (max-width: 800px){
+
+    #formArticle span{
+        display: inline-block;
+        width: 25%;
+        vertical-align: top;
+        font-size: 18px;
+    }
+    #formArticle textarea,
+    #formArticle input,
+    #formArticle select{
+        width: 70%;
+        margin: 0;
+        margin-left: 3%;
+        max-width: 72%;
+        padding: 5px;
+        background: #ffffff;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+        box-sizing: border-box;
+        border: 0;
+    }
+    #sendReview{
+        margin-left: 28%;
+    }
+}
 @media (max-width: 700px){
     #skipperMap h2{
         font-size: 24px;
@@ -56,6 +82,13 @@
     #restaurant-hours td, #restaurant-hours th{
         font-size: 12px;
     }
+
+    #formArticle span{
+        display: inline-block;
+        width: 25%;
+        vertical-align: top;
+        font-size: 15px;
+    }
 }
 @media (max-width: 540px) {
     #restaurant-img,
@@ -71,6 +104,12 @@
     }
 }
 @media (max-width: 500px) {
+    #skipperMap{
+        height: 134px!important;
+    }
+    #favFilter{
+        font-size: 14px;
+    }
     #restaurants-list{
         padding: 0 30px;
     }
@@ -84,7 +123,8 @@
     nav#nav h1 a{
         font-size: 10pt;
     }
-    #reviews-container {
+    #reviews-container,
+    #formArticle{
         padding: 30px 15px 80px;
     }
     .user_comment span{
@@ -98,6 +138,33 @@
         font-weight: bold;
     }
 
+}
+@media (max-width: 465px){
+
+    #formArticle span{
+        display: inline-block;
+        width: 100%;
+        vertical-align: top;
+        font-size: 18px;
+    }
+    #formArticle textarea,
+    #formArticle input,
+    #formArticle select{
+        width: 100%;
+        margin: 0;
+        margin-left: 0%;
+        max-width: 100%;
+        padding: 5px;
+        background: #ffffff;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+        box-sizing: border-box;
+        border: 0;
+    }
+    #sendReview{
+        margin-left: 0%;
+        width: 100%;
+    }
 }
 @media (max-width: 420px) {
     nav#nav h1 a {

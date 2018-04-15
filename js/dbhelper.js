@@ -1,12 +1,14 @@
 const coreBase = idb.open('RestaurantApp', 1, upgradeDB => {
     upgradeDB.createObjectStore('Restaurants', {keyPath: 'id'});
+    upgradeDB.createObjectStore('ToUpd', {keyPath: 'id'});
+    upgradeDB.createObjectStore('Reviews', {keyPath: 'id'});
 });
 
 /**
  * Common database helper functions.
  */
-class DBHelper {
 
+class DBHelper {
 
 
   /**
@@ -17,6 +19,10 @@ class DBHelper {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
+  static get DATABASE_REVIEWS_URL() {
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}`;
+  }
 
   static loadAllRestaurant(){
     fetch(DBHelper.DATABASE_URL).then((resp)=>(resp.json())).then((jsonData)=>{
@@ -26,6 +32,26 @@ class DBHelper {
 
             jsonData.map((elem)=>{
                 tx.objectStore('Restaurants').put({
+                    id: elem.id,
+                    data: {...elem}
+                }).then(()=>{
+
+                  DBHelper.fetchRestaurantByCuisineAndNeighborhood()
+
+                });
+            })
+
+            return tx.complete;
+        });
+
+    })
+    fetch(DBHelper.DATABASE_REVIEWS_URL+"/reviews").then((resp)=>(resp.json())).then((jsonData)=>{
+        coreBase.then(db => {
+            const tx = db.transaction('Reviews', 'readwrite');
+
+
+            jsonData.map((elem)=>{
+                tx.objectStore('Reviews').put({
                     id: elem.id,
                     data: {...elem}
                 });
@@ -116,6 +142,11 @@ class DBHelper {
         if (neighborhood != 'all') { // filter by neighborhood
           results = results.filter(r => r.neighborhood == neighborhood);
         }
+
+          const favCheckbox = document.getElementById('favCheckbox');
+          if(favCheckbox.checked==true)
+              results = results.filter(r => r.is_favorite == "true");
+
         callback(null, results);
       }
     });
@@ -184,6 +215,273 @@ class DBHelper {
     );
     return marker;
   }
+
+
+
+    /**
+     * Delete record.
+     */
+  static onlyDel(transaction, id){
+
+      coreBase.then(db => {
+          const tx = db.transaction(transaction, 'readwrite');
+          tx.objectStore(transaction).delete(id)
+
+
+          });
+  }
+    /**
+     * Delete and add record.
+     */
+  static delAndAdd(transaction, id, obj){
+
+      coreBase.then(db => {
+          const tx = db.transaction(transaction, 'readwrite');
+          tx.objectStore(transaction).delete(id).then(()=>{
+
+              const txd = db.transaction(transaction, 'readwrite');
+              txd.objectStore(transaction).put({id, data: obj}).then(()=>{
+            });
+
+
+          });
+          return tx.complete;
+      });
+  }
+
+  /**
+   * Unfavourite restaurant.
+   */
+  static makeUnFavourite(restaurant) {
+      fetch(DBHelper.DATABASE_URL+"/"+restaurant+"/?is_favorite=false",{
+
+          method: "PUT"
+
+      }).then((response)=>response.json()).then((response)=>{
+
+
+          DBHelper.delAndAdd("Restaurants",parseInt(restaurant),response)
+
+
+
+      }).catch(()=>{
+
+          if(!isNaN(restaurant)){
+              coreBase.then(db => {
+                  const tx = db.transaction('ToUpd', 'readwrite');
+                  tx.objectStore('ToUpd').put({
+                      id: restaurant+"_favEdit",
+                      data: {
+
+                          id_res: restaurant,
+                          type: 'like',
+                          valueD: false
+
+                      }
+                  });
+                  return tx.complete;
+              });
+              coreBase.then(db => {
+                  return db.transaction('Restaurants')
+                      .objectStore('Restaurants').get(restaurant);
+              }).then(
+                  elem => {
+                      let objUpd = {
+                          ...elem.data,
+                          is_favorite: false
+                      }
+                      DBHelper.delAndAdd("Restaurants",parseInt(restaurant),objUpd)
+                  }
+              )
+
+          }
+
+
+      })
+  }
+
+
+    /**
+     * Make favourite restaurant.
+     */
+    static makeFavourite(restaurant) {
+        fetch(DBHelper.DATABASE_URL+"/"+restaurant+"/?is_favorite=true",{
+
+            method: "PUT"
+
+        }).then((response)=>response.json()).then((response)=>{
+
+            DBHelper.delAndAdd("Restaurants",parseInt(restaurant),response)
+
+
+        }).catch(()=>{
+            if(!isNaN(restaurant)){
+                coreBase.then(db => {
+                    const tx = db.transaction('ToUpd', 'readwrite');
+                    tx.objectStore('ToUpd').put({
+                        id: restaurant+"_favEdit",
+                        data: {
+
+                            id_res: restaurant,
+                            type: 'like',
+                            valueD: true
+
+                        }
+                    });
+                    return tx.complete;
+                });
+                coreBase.then(db => {
+                    return db.transaction('Restaurants')
+                        .objectStore('Restaurants').get(restaurant);
+                }).then(
+                    elem => {
+                        let objUpd = {
+                            ...elem.data,
+                            is_favorite: true
+                        }
+                        DBHelper.delAndAdd("Restaurants",parseInt(restaurant),objUpd)
+                    }
+                )
+            }
+
+
+        })
+    }
+    /**
+     * Make favourite restaurant.
+     */
+    static addReview(restaurant, name, rating, comments) {
+      var objToSend = {
+          'restaurant_id':parseInt(restaurant),
+          name,
+          'rating': parseInt(rating),
+          comments
+      };
+        fetch(DBHelper.DATABASE_REVIEWS_URL+"/reviews",{
+
+            method: "POST",
+            data: objToSend
+
+        }).then(data=>data.json()).then((response)=>{
+
+
+            var scheme = {
+                ...objToSend,
+                'createdAt': new Date(response.createdAt),
+                'updatedAt': new Date(response.updatedAt),
+                'id': response.id
+
+            }
+            coreBase.then(db => {
+                const tx = db.transaction('Reviews', 'readwrite');
+
+
+                    tx.objectStore('Reviews').put({
+                        id: response.id,
+                        data: {...scheme}
+                    });
+
+                return tx.complete;
+            });
+            document.querySelector("#reviews-list").appendChild(createReviewHTML(scheme));
+            document.querySelector("#reviews-container>p").remove();
+
+
+        }).catch(()=>{
+                coreBase.then(db => {
+                    const tx = db.transaction('ToUpd', 'readwrite');
+                    tx.objectStore('ToUpd').put({
+                        id: restaurant+"_reviewEdit",
+                        data: {
+
+                            id_res: restaurant,
+                            type: 'review',
+                            valueD: objToSend
+
+                        }
+                    });
+                    return tx.complete;
+                });
+
+            var scheme = {
+                ...objToSend,
+                'id': Date.parse(new Date()),
+                'createdAt': Date.parse(new Date()),
+                'updatedAt': Date.parse(new Date()),
+
+            }
+            coreBase.then(db => {
+                const tx = db.transaction('Reviews', 'readwrite');
+
+
+                tx.objectStore('Reviews').put({
+                    id: Date.parse(new Date()),
+                    data: {...scheme}
+                });
+
+                return tx.complete;
+            });
+
+            document.querySelector("#reviews-list").appendChild(createReviewHTML(scheme));
+            document.querySelector("#reviews-container>p").remove();
+        })
+    }
+
+    static updateChanges(){
+        coreBase.then(db => {
+            return db.transaction('ToUpd')
+                .objectStore('ToUpd').getAll();
+        }).then( dataObj => {
+
+
+            dataObj.map((elem)=>{
+
+
+              let item = elem.data;
+              switch (item.type){
+
+
+
+                  case "like":
+
+                        fetch(DBHelper.DATABASE_URL+"/"+item.id_res+"/?is_favorite="+item.valueD,{
+
+                            method: "PUT"
+
+                        }).then(()=>{
+
+                            DBHelper.onlyDel("ToUpd",elem.id);
+
+
+                        })
+                      break;
+
+                  case "review":
+
+                      fetch(DBHelper.DATABASE_REVIEWS_URL+"/reviews",{
+
+                          method: "POST",
+                          data: item.valueD
+
+                        }).then(()=>{
+
+                            DBHelper.onlyDel("ToUpd",elem.id);
+
+
+                        })
+                      break;
+
+
+
+              }
+
+              return elem;
+            })
+
+        }).catch((error)=>{
+
+        });
+    }
 
 }
 

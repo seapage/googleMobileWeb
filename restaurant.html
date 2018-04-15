@@ -5,7 +5,7 @@
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
-  <link rel="stylesheet" href="css/styles.min.css" type="text/css">
+  <link rel="stylesheet" href="css/styles.css" type="text/css">
   <link rel="stylesheet" media="(max-width: 768px)" href="css/768.css" />
   <link rel="stylesheet" href="css/fontawesome-all.min.css" type="text/css">
   <meta name="theme-color" content="#252831"/>
@@ -15,6 +15,7 @@
 </head>
 
 <body class="inside">
+<div id="offline"></div>
   <!-- Beginning header -->
   <header>
     <!-- Beginning nav -->
@@ -43,6 +44,7 @@
     <!-- Beginning restaurant -->
     <section id="restaurant-container" role="article">
       <h2 id="restaurant-name"></h2>
+      <div id="favourite"></div>
       <img id="restaurant-img">
       <p id="restaurant-cuisine"></p>
 
@@ -56,6 +58,28 @@
     <section id="reviews-container">
       <h3><i class="fas fa-comments"></i> Reviews:</h3>
       <ul id="reviews-list"></ul>
+    </section>
+    <section id="formArticle">
+      <h3><i class="fas fa-comment"></i> Leave your comment:</h3>
+      <label>
+        <span>User name</span>
+        <input id="usernameForm" name="username" type="text" required>
+      </label>
+      <label>
+        <span>Message</span>
+        <textarea id="msgForm" name="msg" required></textarea>
+      </label>
+      <label>
+        <span>Rating</span>
+        <select id="ratingForm" required name="rating" id="">
+          <option value="5">I love it! 5 points</option>
+          <option value="4">Excellent! 4 points</option>
+          <option value="3">Nice place! 3 points</option>
+          <option value="2">If i have to i will be there. 2 points</option>
+          <option value="1">Baby don't take me, no more. 1 points</option>
+        </select>
+      </label>
+      <button id="sendReview">Submit</button>
     </section>
     <!-- End reviews -->
   </main>
@@ -77,6 +101,7 @@
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9V-wKrokG_jO7VP2GfGIF5EdspXYox_4&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
 
+<script src="/js/allPages.js"></script>
 </body>
 
 </html>

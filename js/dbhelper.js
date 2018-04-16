@@ -1,7 +1,8 @@
 const coreBase = idb.open('RestaurantApp', 1, upgradeDB => {
     upgradeDB.createObjectStore('Restaurants', {keyPath: 'id'});
     upgradeDB.createObjectStore('ToUpd', {keyPath: 'id'});
-    upgradeDB.createObjectStore('Reviews', {keyPath: 'id'});
+    var reviews = upgradeDB.createObjectStore('Reviews', {keyPath: 'id'});
+    reviews.createIndex("by-date","createdAt")
 });
 
 /**
@@ -36,7 +37,8 @@ class DBHelper {
                     data: {...elem}
                 }).then(()=>{
 
-                  DBHelper.fetchRestaurantByCuisineAndNeighborhood()
+                  if(typeof updateRestaurants === "function")
+                    updateRestaurants();
 
                 });
             })
@@ -51,8 +53,10 @@ class DBHelper {
 
 
             jsonData.map((elem)=>{
+              console.log(elem);
                 tx.objectStore('Reviews').put({
                     id: elem.id,
+                    createdAt: elem.createdAt,
                     data: {...elem}
                 });
             })
@@ -235,10 +239,12 @@ class DBHelper {
      */
   static delAndAdd(transaction, id, obj){
 
+        console.log(transaction)
+        console.log(id)
+        console.log(obj)
       coreBase.then(db => {
           const tx = db.transaction(transaction, 'readwrite');
           tx.objectStore(transaction).delete(id).then(()=>{
-
               const txd = db.transaction(transaction, 'readwrite');
               txd.objectStore(transaction).put({id, data: obj}).then(()=>{
             });
@@ -257,13 +263,9 @@ class DBHelper {
 
           method: "PUT"
 
-      }).then((response)=>response.json()).then((response)=>{
-
-
-          DBHelper.delAndAdd("Restaurants",parseInt(restaurant),response)
-
-
-
+      }).then(()=>{
+          console.log("fav changed");
+          return true;
       }).catch(()=>{
 
           if(!isNaN(restaurant)){
@@ -281,23 +283,26 @@ class DBHelper {
                   });
                   return tx.complete;
               });
-              coreBase.then(db => {
-                  return db.transaction('Restaurants')
-                      .objectStore('Restaurants').get(restaurant);
-              }).then(
-                  elem => {
-                      let objUpd = {
-                          ...elem.data,
-                          is_favorite: false
-                      }
-                      DBHelper.delAndAdd("Restaurants",parseInt(restaurant),objUpd)
-                  }
-              )
 
           }
 
 
       })
+
+      coreBase.then(db => {
+          return db.transaction('Restaurants')
+              .objectStore('Restaurants').get(parseInt(restaurant));
+      }).then(
+          elem => {
+            console.log("unf")
+              let objUpd = {
+                  ...elem.data,
+                  is_favorite: false
+              }
+              DBHelper.delAndAdd("Restaurants",parseInt(restaurant),objUpd)
+          }
+      )
+
   }
 
 
@@ -309,11 +314,9 @@ class DBHelper {
 
             method: "PUT"
 
-        }).then((response)=>response.json()).then((response)=>{
-
-            DBHelper.delAndAdd("Restaurants",parseInt(restaurant),response)
-
-
+        }).then(()=>{
+          console.log("fav changed");
+          return true;
         }).catch(()=>{
             if(!isNaN(restaurant)){
                 coreBase.then(db => {
@@ -330,27 +333,31 @@ class DBHelper {
                     });
                     return tx.complete;
                 });
-                coreBase.then(db => {
-                    return db.transaction('Restaurants')
-                        .objectStore('Restaurants').get(restaurant);
-                }).then(
-                    elem => {
-                        let objUpd = {
-                            ...elem.data,
-                            is_favorite: true
-                        }
-                        DBHelper.delAndAdd("Restaurants",parseInt(restaurant),objUpd)
-                    }
-                )
+
             }
 
 
         })
+
+        coreBase.then(db => {
+            return db.transaction('Restaurants')
+                .objectStore('Restaurants').get(parseInt(restaurant));
+        }).then(
+            elem => {
+                console.log("tr")
+                let objUpd = {
+                    ...elem.data,
+                    is_favorite: true
+                }
+                DBHelper.delAndAdd("Restaurants",parseInt(restaurant),objUpd)
+            }
+        )
     }
     /**
      * Make favourite restaurant.
      */
     static addReview(restaurant, name, rating, comments) {
+        var dateInt = Date.parse(new Date());
       var objToSend = {
           'restaurant_id':parseInt(restaurant),
           name,
@@ -378,12 +385,14 @@ class DBHelper {
 
                     tx.objectStore('Reviews').put({
                         id: response.id,
+                        createdAt: dateInt,
                         data: {...scheme}
                     });
 
                 return tx.complete;
             });
             document.querySelector("#reviews-list").appendChild(createReviewHTML(scheme));
+            if(document.querySelector("#reviews-container>p"))
             document.querySelector("#reviews-container>p").remove();
 
 
@@ -405,9 +414,9 @@ class DBHelper {
 
             var scheme = {
                 ...objToSend,
-                'id': Date.parse(new Date()),
-                'createdAt': Date.parse(new Date()),
-                'updatedAt': Date.parse(new Date()),
+                'id': dateInt,
+                'createdAt': dateInt,
+                'updatedAt': dateInt,
 
             }
             coreBase.then(db => {
@@ -415,6 +424,7 @@ class DBHelper {
 
 
                 tx.objectStore('Reviews').put({
+                    createdAt: dateInt,
                     id: Date.parse(new Date()),
                     data: {...scheme}
                 });
@@ -423,6 +433,7 @@ class DBHelper {
             });
 
             document.querySelector("#reviews-list").appendChild(createReviewHTML(scheme));
+            if(document.querySelector("#reviews-container>p"))
             document.querySelector("#reviews-container>p").remove();
         })
     }

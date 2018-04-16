@@ -145,7 +145,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     coreBase.then(db => {
         return db.transaction('Reviews')
-            .objectStore('Reviews').getAll();
+            .objectStore('Reviews').index('by-date').getAll();
     }).then(
         allObjs => {
 
@@ -264,3 +264,6 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+
+DBHelper.loadAllRestaurant()
